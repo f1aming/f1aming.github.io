@@ -1335,3 +1335,6 @@ table td {
 #ds-reset .ds-post-button:hover {
   background: #608cb7 !important;
 }
+#ds-reset .site-meta {
+  background: $pink;
+}
