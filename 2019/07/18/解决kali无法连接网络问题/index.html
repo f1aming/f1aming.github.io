@@ -8,17 +8,17 @@
   <link rel="dns-prefetch" href="http://f1aming.github.io">
   <title>解决kali无法连接网络问题 | f1aming</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="键入 ifconfig -a 查看网卡 ，是否存在   键入 leafpad /etc/network/interfaces 查看其中是否有如下语句，没有添加上即可： auto eth0 iface eth0 inet dhcp   然后重启：/etc/init.d/networking restart   如果仍无法连接网络，重置虚拟网络：编辑–虚拟网络编辑器   键入 leafpad /et">
+  <meta name="description" content=". 键入 ifconfig -a 查看网卡 ，是否存在  . 键入 leafpad /etc/network/interfaces 查看其中是否有如下语句，没有添加上即可：      auto eth0      iface eth0 inet dhcp  . 然后重启：/etc/init.d/networking restart  . 如果仍无法连接网络，重置虚拟网络：编辑–虚拟网络编辑器">
 <meta property="og:type" content="article">
 <meta property="og:title" content="解决kali无法连接网络问题">
 <meta property="og:url" content="http://f1aming.github.io/2019/07/18/解决kali无法连接网络问题/index.html">
 <meta property="og:site_name" content="f1aming">
-<meta property="og:description" content="键入 ifconfig -a 查看网卡 ，是否存在   键入 leafpad /etc/network/interfaces 查看其中是否有如下语句，没有添加上即可： auto eth0 iface eth0 inet dhcp   然后重启：/etc/init.d/networking restart   如果仍无法连接网络，重置虚拟网络：编辑–虚拟网络编辑器   键入 leafpad /et">
+<meta property="og:description" content=". 键入 ifconfig -a 查看网卡 ，是否存在  . 键入 leafpad /etc/network/interfaces 查看其中是否有如下语句，没有添加上即可：      auto eth0      iface eth0 inet dhcp  . 然后重启：/etc/init.d/networking restart  . 如果仍无法连接网络，重置虚拟网络：编辑–虚拟网络编辑器">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-07-18T10:34:29.451Z">
+<meta property="og:updated_time" content="2019-07-26T05:13:47.096Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="解决kali无法连接网络问题">
-<meta name="twitter:description" content="键入 ifconfig -a 查看网卡 ，是否存在   键入 leafpad /etc/network/interfaces 查看其中是否有如下语句，没有添加上即可： auto eth0 iface eth0 inet dhcp   然后重启：/etc/init.d/networking restart   如果仍无法连接网络，重置虚拟网络：编辑–虚拟网络编辑器   键入 leafpad /et">
+<meta name="twitter:description" content=". 键入 ifconfig -a 查看网卡 ，是否存在  . 键入 leafpad /etc/network/interfaces 查看其中是否有如下语句，没有添加上即可：      auto eth0      iface eth0 inet dhcp  . 然后重启：/etc/init.d/networking restart  . 如果仍无法连接网络，重置虚拟网络：编辑–虚拟网络编辑器">
   
     <link rel="alternative" href="/atom.xml" title="f1aming" type="application/atom+xml">
   
@@ -178,24 +178,12 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <ol>
-<li>键入 ifconfig -a 查看网卡 ，是否存在</li>
-</ol>
-<ol start="2">
-<li>键入 leafpad /etc/network/interfaces 查看其中是否有如下语句，没有添加上即可：<br> auto eth0<br> iface eth0 inet dhcp</li>
-</ol>
-<ol start="3">
-<li>然后重启：/etc/init.d/networking restart</li>
-</ol>
-<ol start="4">
-<li>如果仍无法连接网络，重置虚拟网络：编辑–虚拟网络编辑器</li>
-</ol>
-<ol start="5">
-<li>键入 leafpad /etc/NetworkManager/NetworkManager.conf 将其中的false改为true</li>
-</ol>
-<ol start="6">
-<li>键入ifup eth0 启动网卡</li>
-</ol>
+        <p> . 键入 ifconfig -a 查看网卡 ，是否存在</p>
+<p> . 键入 leafpad /etc/network/interfaces 查看其中是否有如下语句，没有添加上即可：<br>      auto eth0<br>      iface eth0 inet dhcp</p>
+<p> . 然后重启：/etc/init.d/networking restart</p>
+<p> . 如果仍无法连接网络，重置虚拟网络：编辑–虚拟网络编辑器</p>
+<p> . 键入 leafpad /etc/NetworkManager/NetworkManager.conf 将其中的false改为true</p>
+<p>  . 键入ifup eth0 启动网卡</p>
 
       
 
@@ -288,6 +276,15 @@
 
   
 <nav id="article-nav">
+  
+    <a href="/2019/07/26/php文件包含及利用其getshell/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          php文件包含及利用其getshell
+        
+      </div>
+    </a>
   
   
     <a href="/2019/05/20/MySQL 盲注小总结/" id="article-nav-older" class="article-nav-link-wrap">
@@ -415,6 +412,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
             <input type="checkbox" q-on="click:toggleTag(e)" q-attr="checked:showTags">
           </label>
           <ul class="article-tag-list" q-show="showTags">
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">文件包含</a>
+              </li>
             
             <div class="clearfix"></div>
           </ul>
